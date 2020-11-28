@@ -101,7 +101,7 @@ class PlotAndStoreSolution:
             # native matplotlib animation
             if n == 0:
                 self.plt.ion()
-                if self.init(x) != 0 :
+                if self.init(x) is not None :
                     self.lines = self.plt.plot(x, self.init(x), 'k--')
                 self.lines = self.plt.plot(x, u, 'b-')
                 self.plt.axis([x[0], x[-1], umin, umax])
@@ -225,6 +225,8 @@ class PlotMediumAndSolution(PlotAndStoreSolution):
                 title = self.title + ' ' + title
             if n == 0:
                 self.plt.ion()
+                if self.init() is not None :
+                    self.lines = self.plt.plot(x, self.init(x), 'k--')
                 self.lines = self.plt.plot(x, u, 'r-',
                     [x_L, x_L], [umin, umax], 'k--',
                     [x_R, x_R], [umin, umax], 'k--')

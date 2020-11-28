@@ -92,7 +92,7 @@ def set_init(active, ishape, x0, sigma):
             raise ValueError('Wrong peak shape="%s"' % init_shape)
     else :
         def I(x):
-            return 0
+            return None
     return 0
     
 

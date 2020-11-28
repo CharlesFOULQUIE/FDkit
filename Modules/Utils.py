@@ -34,6 +34,7 @@ def parse_userparam() :
     active_medium = DataSet["Medium"]["active_zone"]
     medium=DataSet["Medium"]["zone"] 
     slowness_factor=DataSet["Medium"]["slowness_factor"] 
+    
     bc_type= {}
     bc_type['left'] = DataSet["BoundaryConditions"]["left"]
     bc_type['right'] = DataSet["BoundaryConditions"]["right"]

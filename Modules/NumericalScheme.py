@@ -47,16 +47,52 @@ def advec1D_Leapfrog(u, u_n, u_nm1, n, Nx, C, f, dt, x, t, bc_type):
     return u, u_n, u_nm1
 
 
-def advec1D_LW(u, u_n, Nx, C, f, n, dt, x, t):
+def advec1D_LW(u, u_n, Nx, C, f, n, dt, x, t, bc_type):
     ''' The Lax-Wendroff method '''
+    periodic_bc = False
+    if bc_type['left'] == bc_type['right'] and bc_type['right'] == 'periodic':
+        periodic_bc = True
 
+    if periodic_bc:
+        i = 0
+        # Must have this,
+        u[i] = u_n[i] - 0.5*C*(u_n[i+1] - u_n[Nx-1]) + \
+               0.5*C**2*(u_n[i+1] - 2*u_n[i] + u_n[Nx-1]) + dt*f(x[i], t[n])
+        # not this:
+        #u_n[i] = u_n[Nx]
+    for i in range(1, Nx):
+        u[i] = u_n[i] - 0.5*C*(u_n[i+1] - u_n[i-1]) + \
+               0.5*C**2*(u_n[i+1] - 2*u_n[i] + u_n[i-1]) + dt*f(x[i], t[n])
+
+    if periodic_bc:
+        u[Nx] = u[0]
+        
+    if not periodic_bc:
+        u[0] = 0
     
     return u, u_n
     
     
-def advec1D_LF(u, u_n, Nx, C, f, n, dt, x, t):
+def advec1D_LF(u, u_n, Nx, C, f, n, dt, x, t, bc_type):
     ''' The Lax–Friedrichs method '''
+    periodic_bc = False
+    if bc_type['left'] == bc_type['right'] and bc_type['right'] == 'periodic':
+        periodic_bc = True
 
+    if periodic_bc:
+        i = 0
+        # Must have this,
+        u[i] = 0.5*(u_n[i+1] + u_n[Nx-1]) - 0.5*C*(u_n[i+1] - u_n[Nx-1]) + dt*f(x[i], t[n])
+        # not this:
+        #u_n[i] = u_n[Nx]
+    for i in range(1, Nx):
+        u[i] = 0.5*(u_n[i+1] + u_n[i-1]) - 0.5*C*(u_n[i+1] - u_n[i-1])  + dt*f(x[i], t[n])
+
+    if periodic_bc:
+        u[Nx] = u[0]
+        
+    if not periodic_bc:
+        u[0] = 0
     
     return u, u_n
     

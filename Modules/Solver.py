@@ -118,7 +118,7 @@ def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt,
 
         elif scheme == "LW":
             for n in It[0:-1]:
-                u, u_n = NumericalScheme.advec1D_LW(u, u_n, Nx, C, f, n, dt, x, t) # --- Compute
+                u, u_n = NumericalScheme.advec1D_LW(u, u_n, Nx, C, f, n, dt, x, t, bc_type) # --- Compute
                 if user_action is not None: # --- Plot solution
                     if user_action(u, x, t, n+1):
                         break
@@ -126,7 +126,7 @@ def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt,
 
         elif scheme == "LF":
             for n in It[0:-1]:
-                u, u_n = NumericalScheme.advec1D_LF(u, u_n, Nx, C, f, n, dt, x, t) # --- Compute
+                u, u_n = NumericalScheme.advec1D_LF(u, u_n, Nx, C, f, n, dt, x, t, bc_type) # --- Compute
                 if user_action is not None: # --- Plot solution
                     if user_action(u, x, t, n+1):
                         break
