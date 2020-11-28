@@ -6,7 +6,7 @@ DataSet={
           
 "Discretization":{"spatial resolution": 100,        # spatial resolution
                   "fourier number":0.5,             # Maximum Fourier number
-                  "courant number":0.8,             # Maximum Courant number
+                  "courant number":1.0,             # Maximum Courant number
                   "scheme":"FE_CD",                 # Numerical scheme
                   "version":"vectorized"},          # 'scalar' or 'vectorized'
                   

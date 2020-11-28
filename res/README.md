@@ -1,1 +1,0 @@
-# res directory to store numpy archives, frames and videos
