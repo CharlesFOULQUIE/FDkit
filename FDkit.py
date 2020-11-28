@@ -34,6 +34,26 @@ def set_source(active, stype,x0,sigma):
         def f(x,t):
             return 0
     return 0
+    
+def set_bc(bc_type):
+    global U_0
+    global U_L
+    f=10
+
+    if bc_type['left'] in ('harmonic'):
+        def U_0(t):
+            return np.cos(2*np.pi*f*t) 
+    else :
+        def U_0(t):
+            return 0    
+    
+    if bc_type['right'] in ('harmonic'):
+        def U_L(t):
+            return np.cos(2*np.pi*f*t) 
+    else :
+        def U_L(t):
+            return 0
+    return 0
 
     
 def set_init(active, ishape, x0, sigma):
@@ -83,7 +103,7 @@ def main():
     active_init, init_loc, init_shape, init_sigma, \
     active_source, source_loc, source_type, source_sigma, \
     a_0, c_0, active_medium, medium, \
-    slowness_factor= Utils.parse_userparam()
+    slowness_factor, bc_type= Utils.parse_userparam()
     
     # set grid
     dx, dt = Utils.set_discretization(equation, L, Nx, a_0, c_0, C, F)
@@ -138,8 +158,9 @@ def main():
     set_init(active_init, init_shape, init_loc, init_sigma)
     set_source(active_source, source_type, source_loc, source_sigma) 
     set_celerity(c_0, medium, slowness_factor, active_medium)
+    set_bc(bc_type)
     
-    umin, umax = Utils.set_window(equation)
+    umin, umax = Utils.set_window(equation, bc_type)
     
     # Set animation style
     if active_medium == True :
@@ -153,11 +174,10 @@ def main():
     
     # Solve problem
     cpu, hashed_input = Solver.solver(
-        equation, scheme,
-        I=I, V=None, f=f, c=c,
-        U_0=None, U_L=None,
-        L=L, dt=dt, dx=dx, C=C, F=F, T=T, 
-        user_action=action, version=version)
+        equation, scheme, I=I, V=None, f=f, 
+        c=c, U_0=U_0, U_L=U_L, L=L, dt=dt, 
+        dx=dx, C=C, F=F, T=T, user_action=action, 
+        version=version, bc_type=bc_type)
 
     if cpu > 0:  # did we generate new data?
         print('hashed_input :', hashed_input)

@@ -34,11 +34,14 @@ def parse_userparam() :
     active_medium = DataSet["Medium"]["active_zone"]
     medium=DataSet["Medium"]["zone"] 
     slowness_factor=DataSet["Medium"]["slowness_factor"] 
+    bc_type= {}
+    bc_type['left'] = DataSet["BoundaryConditions"]["left"]
+    bc_type['right'] = DataSet["BoundaryConditions"]["right"]
     
     return equation, T, L, scheme, C, F, Nx, version, animate, skip, \
     set_init, init_loc, init_shape, init_sigma, \
     set_source, source_loc, source_type, source_sigma, \
-    a_0, c_0, active_medium, medium, slowness_factor
+    a_0, c_0, active_medium, medium, slowness_factor, bc_type 
 
 def set_discretization(equation, L, Nx, a_0, c_0, C, F) :
     dx=(L/Nx)    
@@ -94,8 +97,10 @@ def set_casename(equation, T, L, scheme, C, F, dx, dt, \
 
     return casename
 
-def set_window(equation) :
-    if equation in ('Burger','inviscidBurger'):
+def set_window(equation, bc_type) :
+    if equation in ('Burger','inviscidBurger') \
+    or bc_type['left'] in('harmonic') \
+    or bc_type['right'] in('harmonic'):
         umin=-1.5; umax=1.5
     else:
         umin=-0.5; umax=1.5

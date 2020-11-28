@@ -56,7 +56,7 @@ class PlotAndStoreSolution:
         import matplotlib.pyplot as plt
         self.plt = plt
         self.screen_movie = screen_movie
-        self.title = title
+        self.title = casename
         self.skip = skip
         self.filename = filename
         self.init = init
@@ -101,12 +101,13 @@ class PlotAndStoreSolution:
             # native matplotlib animation
             if n == 0:
                 self.plt.ion()
-                self.lines = self.plt.plot(x, self.init(x), 'k--')
+                if self.init(x) != 0 :
+                    self.lines = self.plt.plot(x, self.init(x), 'k--')
                 self.lines = self.plt.plot(x, u, 'b-')
                 self.plt.axis([x[0], x[-1], umin, umax])
                 self.plt.xlabel('x')
                 self.plt.ylabel('u')
-                self.plt.title(title)
+                self.plt.title(title, fontsize=10)
                 self.plt.legend(['t=%.3f' % t[n]])
                 self.plt.pause(0.0001) 
             else:
@@ -230,7 +231,7 @@ class PlotMediumAndSolution(PlotAndStoreSolution):
                 self.plt.axis([x[0], x[-1], umin, umax])
                 self.plt.xlabel('x')
                 self.plt.ylabel('u')
-                self.plt.title(title)
+                self.plt.title(title, fontsize=10)
                 self.plt.legend(['t=%.3f' % t[n]])
                 self.plt.pause(0.0001) # Charles
             else:

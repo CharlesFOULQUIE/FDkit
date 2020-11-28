@@ -46,14 +46,14 @@ def Initialize(f, I, V, U_0, U_L, c, x, Nx, t, version):
         
     return f, I, V, U_0, U_L, c
     
-def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt, V, f, C, F, version, user_action):
+def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt, V, f, C, F, version, user_action, bc_type):
     It = range(0, Nt+1)
     
     if equation == "Wave":
     
         if scheme == "CD":
             for n in It[0:-1]:
-                u, u_n, u_nm1 = NumericalScheme.wave1D(u, u_n, u_nm1, n, x, t, dx, dt, c, U_0, U_L, Nx, V, f, version) # --- Compute
+                u, u_n, u_nm1 = NumericalScheme.wave1D(u, u_n, u_nm1, n, x, t, dx, dt, c, U_0, U_L, Nx, V, f, version, bc_type) # --- Compute
                 if user_action is not None: # --- Plot solution
                     if user_action(u, x, t, n+1):
                         break
@@ -109,7 +109,7 @@ def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt,
     
         if scheme == "Leapfrog": 
             for n in It[0:-1]:
-                u, u_n, u_nm1 = NumericalScheme.advec1D_Leapfrog(u, u_n, u_nm1, n, Nx, C, f, dt, x, t) # --- Compute
+                u, u_n, u_nm1 = NumericalScheme.advec1D_Leapfrog(u, u_n, u_nm1, n, Nx, C, f, dt, x, t, bc_type) # --- Compute
                 if user_action is not None: # --- Plot solution
                     if user_action(u, x, t, n+1):
                         break
@@ -142,7 +142,7 @@ def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt,
 
         elif scheme == "FE_CD": # Forward Euler scheme in time and centered differences in space (FECS).
             for n in It[0:-1]:
-                u, u_n = NumericalScheme.advec1D_FE_CD(u, u_n, Nx, C, f, n, dt, x, t) # --- Compute
+                u, u_n = NumericalScheme.advec1D_FE_CD(u, u_n, Nx, C, f, n, dt, x, t, bc_type) # --- Compute
                 if user_action is not None: # --- Plot solution
                     if user_action(u, x, t, n+1):
                         break
@@ -158,7 +158,7 @@ def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt,
 def solver(
     equation, scheme, 
     I, V, f, c, U_0, U_L, L, dt, dx, C, F, T,
-    user_action=None, version='scalar'):
+    user_action=None, version='scalar', bc_type=None):
 
     # --- Compute time and space grid ---
     Nt = int(round(T/dt))
@@ -201,7 +201,7 @@ def solver(
 
     # --- Time loop ---
     t0 = time.time()  # CPU time measurement
-    TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt, V, f, C, F, version, user_action)
+    TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt, V, f, C, F, version, user_action, bc_type)
     cpu_time = time.time() - t0
     
     print("\n")
