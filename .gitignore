@@ -1,8 +1,6 @@
-
-__pycache__/_UserParam.cpython-39.pyc
-res/.a68c5591facfec3994e55005acbbebd1bf224943_archive.npz
 *.png
 *.flv
 *.mp4
 *.ogg
 *.webm
+*.pyc
