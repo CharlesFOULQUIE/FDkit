@@ -97,10 +97,22 @@ def advec1D_LF(u, u_n, Nx, C, f, n, dt, x, t, bc_type):
     return u, u_n
     
 
-def advec1D_UP(u, u_n, Nx, C, f, n, dt, x, t):
+def advec1D_UP(u, u_n, Nx, C, f, n, dt, x, t, bc_type):
     ''' Forward Euler scheme in time and UPwind differences in space '''
-    periodic_bc=True
+    periodic_bc = False
+    if bc_type['left'] == bc_type['right'] and bc_type['right'] == 'periodic':
+        periodic_bc = True
 
+    if periodic_bc:
+        i = 0
+        u[i] = u_n[i] - C*(u_n[i] - u_n[Nx]) + dt*f(x[i], t[n])
+        u_n[Nx] = u_n[0] 
+
+    for i in range(1, Nx+1):
+        u[i] = u_n[i] - C*(u_n[i] - u_n[i-1]) + dt*f(x[i], t[n])
+
+    if not periodic_bc:
+        u[0] = 0
     
     return u, u_n
 
@@ -204,7 +216,7 @@ def wave1D(u, u_n, u_nm1, n, x, t, dx, dt, c, U_0, U_L, Nx, V, f, version, bc_ty
                     0.5*(c[i]**2 + c[i]**2)*(u_n[i] - u_nm1[i])) + \
             dt2*f(x[i], t[n])
             
-        elif bc_type['left'] == 'harmonic':
+        elif bc_type['left'] == 'harmonic' or bc_type['left'] == 'zero':
             u[i] = U_0(t[n+1])
             
         else :
@@ -225,7 +237,7 @@ def wave1D(u, u_n, u_nm1, n, x, t, dx, dt, c, U_0, U_L, Nx, V, f, version, bc_ty
                 C2*(0.5*(c[i]**2 + c[ip1]**2)*(u_n[ip1] - u_n[i])  - \
                     0.5*(c[i]**2 + c[i]**2)*(u_n[i] - u_nm1[i])) + \
             dt2*f(x[i], t[n])
-        elif bc_type['right'] == 'harmonic':
+        elif bc_type['right'] == 'harmonic' or bc_type['right'] == 'zero':
             u[i] = U_L(t[n+1])   
         else :
             raise ValueError('bc right error : {} not implemented'.format(bc_type['right'])) 

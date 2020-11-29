@@ -89,10 +89,10 @@ def set_casename(equation, T, L, scheme, C, F, dx, dt, \
         IMPULSION = "_init_%s_loc%s_sigma%s" % (init_shape, init_loc, init_sigma)
         
     if active_source == True :
-        IMPULSION = "_source_%s_loc%s_sigma%s" % (source_shape, source_loc, source_sigma)
+        IMPULSION = "_source_%s_loc%s_sigma%s" % (source_type, source_loc, source_sigma)
    
     if active_medium == True :
-        MEDIUM = "-medium_%s_slowness_factor%s" % (medium, slowness_factor)
+        MEDIUM = "_medium_%s_slowness_factor%s" % (medium, slowness_factor)
 
     casename = "%s_%s_T%s_L%s_dx%s_dt%s_%s%s%s" % (equation, scheme, T, L, dx, dt, ADIM, IMPULSION, MEDIUM)
 
@@ -107,11 +107,11 @@ def set_window(equation, bc_type) :
         umin=-0.5; umax=1.5
     return umin, umax
 
-def read_archive(equation, archive_name):
+def read_archive(equation, archive_name, bc_type):
 
     array_names = np.load(archive_name)
     
-    umin, umax = set_window(equation)
+    umin, umax = set_window(equation, bc_type)
     n=0;  
     for array_name in array_names:
         if array_name != 't':

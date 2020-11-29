@@ -4,14 +4,14 @@ import time, os
 import numpy as np
 from Modules import NumericalScheme
 
-def make_hash(I,V,f,c,U_0,U_L,L,dt,C,F,T,equation,scheme):
+def make_hash(I,V,f,c,U_0,U_L,L,dx,dt,C,F,T,equation,scheme):
     import hashlib, inspect
     data = inspect.getsource(I) + '_' + inspect.getsource(V) + \
            '_' + inspect.getsource(f) + '_' + str(c) + '_' + \
            ('None' if U_0 is None else inspect.getsource(U_0)) + \
            ('None' if U_L is None else inspect.getsource(U_L)) + \
-           '_' + str(L) + str(dt) + '_' + str(C) + '_' + str(T) + \
-           '_' + str(equation) + '_' + str(scheme)
+           '_' + str(L) + '_' + str(dx) + '_' + str(dt) + '_' + \
+           str(C) + '_' + str(T) + '_' + str(equation) + '_' + str(scheme)
     hashed_input = hashlib.sha1(data.encode('utf-8')).hexdigest()
     return hashed_input
 
@@ -134,7 +134,7 @@ def TimeLoop(equation, scheme, u, u_n, u_nm1, x, t, dx, dt, c, U_0, U_L, Nx, Nt,
 
         elif scheme == "UP":
             for n in It[0:-1]:
-                u, u_n = NumericalScheme.advec1D_UP(u, u_n, Nx, C, f, n, dt, x, t) # --- Compute
+                u, u_n = NumericalScheme.advec1D_UP(u, u_n, Nx, C, f, n, dt, x, t, bc_type) # --- Compute
                 if user_action is not None: # --- Plot solution
                     if user_action(u, x, t, n+1):
                         break
@@ -174,7 +174,7 @@ def solver(
     f, I, V, U_0, U_L, c = Initialize(f, I, V, U_0, U_L, c, x, Nx, t, version)
 
     # --- Make hash of all input data ---
-    hashed_input=make_hash(I,V,f,c,U_0,U_L,L,dt,C,F,T,equation,scheme)
+    hashed_input=make_hash(I,V,f,c,U_0,U_L,L,dx,dt,C,F,T,equation,scheme)
     
     # Check if simulation is already run
     check = True

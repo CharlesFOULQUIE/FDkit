@@ -13,3 +13,5 @@ set PATH=%PYTHON_INSTALL%;%FFMPEG_INSTALL%;%PATH%
 python.exe FDkit.py
 
 pause
+
+

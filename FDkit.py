@@ -18,16 +18,19 @@ def set_celerity(c_0, medium, slowness_factor, active):
         def c(x):
             return c_0
 
-def set_source(active, stype,x0,sigma):
+def set_source(active, stype, x0, sigma, L, c_0):
     global f
     if active == True :
         if stype in ('harmonic_gaussian_peak'):
             def f(x,t):
-                return 100*np.exp(-0.5*((x-x0)/sigma)**2)*np.cos(2*np.pi*2.0*t) 
+                return np.exp(-0.5*((x-x0)/sigma)**2)*np.cos(2*np.pi*2.0*t) 
         elif stype in ('progressive_gaussian_peak'):
             def f(x,t):
-                return np.exp(-0.5*((x-x0)/sigma)**2) \
-                    if t <= 0.25 else 0
+                return 0.25*np.exp(-0.5*((x-x0)/sigma)**2) \
+                    if t <= 10.0 else 0
+        elif stype in ('wave_source1'):
+            def f(x,t):
+                return (2.0*c_0**2 - x*(L-x))*np.sin(t)     
         else:
             raise ValueError('Wrong source setting="%s"' % stype)
     else :
@@ -52,6 +55,18 @@ def set_bc(bc_type):
             return np.cos(2*np.pi*f*t) 
     else :
         def U_L(t):
+            return 0
+    return 0
+    
+    
+def set_init_derivative(equation,stype, L):
+    global V
+    
+    if stype in ('wave_source1') and equation in ('Wave'):
+        def V(x):
+            return x*(x-L)
+    else:
+        def V(x):
             return 0
     return 0
 
@@ -92,7 +107,7 @@ def set_init(active, ishape, x0, sigma):
             raise ValueError('Wrong peak shape="%s"' % init_shape)
     else :
         def I(x):
-            return None
+            return 0
     return 0
     
 
@@ -156,7 +171,8 @@ def main():
 
     # Set test case configuration
     set_init(active_init, init_shape, init_loc, init_sigma)
-    set_source(active_source, source_type, source_loc, source_sigma) 
+    set_init_derivative(equation, source_type, L)
+    set_source(active_source, source_type, source_loc, source_sigma, L, c_0) 
     set_celerity(c_0, medium, slowness_factor, active_medium)
     set_bc(bc_type)
     
@@ -174,7 +190,7 @@ def main():
     
     # Solve problem
     cpu, hashed_input = Solver.solver(
-        equation, scheme, I=I, V=None, f=f, 
+        equation, scheme, I=I, V=V, f=f, 
         c=c, U_0=U_0, U_L=U_L, L=L, dt=dt, 
         dx=dx, C=C, F=F, T=T, user_action=action, 
         version=version, bc_type=bc_type)
@@ -189,7 +205,7 @@ def main():
         print("Souhaitez vous lire l'archive ?")
         user_choice = input()
         if user_choice in ('oui','1','OUI','Oui','ouii'):
-            Utils.read_archive(equation, os.path.join(action.get_res_directory(),'.' + hashed_input + '_archive.npz'))
+            Utils.read_archive(equation, os.path.join(action.get_res_directory(),'.' + hashed_input + '_archive.npz'), bc_type)
         else:
             print("ok tant pi")
 

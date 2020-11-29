@@ -101,7 +101,7 @@ class PlotAndStoreSolution:
             # native matplotlib animation
             if n == 0:
                 self.plt.ion()
-                if self.init(x) is not None :
+                if self.init(x) is not 0 :
                     self.lines = self.plt.plot(x, self.init(x), 'k--')
                 self.lines = self.plt.plot(x, u, 'b-')
                 self.plt.axis([x[0], x[-1], umin, umax])
@@ -154,7 +154,7 @@ class PlotAndStoreSolution:
         fps = 12 # frames per second
 
         # Make other movie formats: Flash, Webm, Ogg, MP4
-        codec2ext = dict(flv='flv', libx264='mp4', libvpx='webm',
+        codec2ext = dict(avi='avi', flv='flv', libx264='mp4', libvpx='webm',
                          libtheora='ogg')
         filespec = 'frame_%04d.png'
         movie_program = 'ffmpeg'  # or 'avconv'
@@ -225,9 +225,9 @@ class PlotMediumAndSolution(PlotAndStoreSolution):
                 title = self.title + ' ' + title
             if n == 0:
                 self.plt.ion()
-                if self.init() is not None :
+                if self.init(x) is not 0 :
                     self.lines = self.plt.plot(x, self.init(x), 'k--')
-                self.lines = self.plt.plot(x, u, 'r-',
+                self.lines = self.plt.plot(x, u, 'b-',
                     [x_L, x_L], [umin, umax], 'k--',
                     [x_R, x_R], [umin, umax], 'k--')
                 self.plt.axis([x[0], x[-1], umin, umax])
